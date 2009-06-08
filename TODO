@@ -3,7 +3,7 @@ Release check:
 	remove/sanitize htaccess file(s)
 	remove ~ files
 	check for . files
-	remove .svn folders
+	remove .hg folders
 	remove sync script
 	remove .banner link
 	security check

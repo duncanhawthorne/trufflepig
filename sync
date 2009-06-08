@@ -2,6 +2,8 @@
 from __future__ import division #to give true division
 import os, sys
 
+sys.exit()
+
 '''
 Mercurial sync script
 '''
