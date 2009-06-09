@@ -7,3 +7,5 @@ website/.htaccess
 .svn
 *.pyc
 wiki
+wiki-banner.png
+banner.png
