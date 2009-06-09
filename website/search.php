@@ -1,4 +1,4 @@
-<!--
+<?
 #	Copyright (C) 2009  Duncan Hawthorne, Oliver Stevens
 #
 #	This file is part of Trufflepig.
@@ -15,7 +15,7 @@
 #
 #	You should have received a copy of the GNU Affero General Public License
 #	along with Trufflepig.  If not, see <http://www.gnu.org/licenses/>.
--->
+?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
