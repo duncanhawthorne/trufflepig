@@ -1,0 +1,48 @@
+Release check:
+	sanitize check
+	remove/sanitize htaccess file(s)
+	remove ~ files
+	check for . files
+	remove .hg folders
+	remove sync script
+	remove .banner link
+	security check
+	
+TODO features:
+	Project:
+		put mysql column titles into config file
+		check the project has all the information in it to get it started from scratch
+	
+	Scanner:
+		record folders as well as files, so can see problems. ie make empty share look different to share with empty folders
+		should include top level folders in shares
+		be more intelligent about when a whole top level folder has gone missing, then share size needs to be reevaluated, otherwise more slowly
+		remove last-pinged?
+		change last-pinged to last attempted scanned (maybe)
+		"new stuff" check if total amount of files is more than previous, then go through to work out what is new (wont work, as you wont know how many there were previsiouly)
+		can do if not "filename", "path", "ip" in hosts then mark as new, all in a sql command rather than doing the logic in python.
+		in fact scrap the ip, then will spot new files to the network rather than mirrored files.
+		this is going to be slow, and if any sql logic is used, break consistency...
+		deal with someone going offline halfway through a scan
+		
+	
+	Website:
+		make it follow standards
+		make sharing information in top right an expandable box, using javascript i guess	
+		an x button to delete comments off the wall that you made in the last 5 minutes. only appears to you in 5 minutes after making a post, only works for 5 minutes, only deletes correct post if multiple get made in a row
+		computers with the same name shouldnt be counted on the hosts page, or in totals
+		make wall consistent with the other tables. use unix time.?
+		make column names agree with hosts and files ie ip, name, time
+		remove .htaccess from subversion
+		make the wall line up properly when there are no posts on it
+		admin page features:
+				add person to whitelist
+				remove record of person (which does hosts and files, maybe wall)
+		searching should try to give you one copy of each file (judging by file size combined with even minimal similarity in name (eg even appearing on the same search) should be enough), then the other copy at the bottom, ie will all other search results in the middle, giving preference to smaller sharers.
+		add a "scan me now" button for updates in top right, hopefully in an expandable box, visible when you are not sharing properly. enabled via the config file
+		mediawiki type installer for first run of site by admin
+		user class, mysql class, table class
+		wall colors so poster keeps same color
+		clean up css file
+		
+		#first time message, ie hit count = 0 explaining what is happening

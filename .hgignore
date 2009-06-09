@@ -1,0 +1,9 @@
+# use glob syntax.
+syntax: glob
+
+.htaccess
+website/.htaccess
+*~
+.svn
+*.pyc
+wiki
