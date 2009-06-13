@@ -235,7 +235,10 @@ function post_to_wall()
 	MySQL_query($sql);
 
 	$sql = 'delete from '.$config[dbwall].' where time not in (select * from (select time from '.$config[dbwall].' order by time desc limit 40) as foo);';
-	MySQL_query($sql);#so only the last 40 entries are kept in the database. wysiwyg	
+	MySQL_query($sql);#so only the last 40 entries are kept in the database. wysiwyg
+	
+	#FIXME this is a bad way to do things, but stop post data prompt on refresh
+	echo '<meta HTTP-EQUIV="REFRESH" content="0; url='.$config[web_address].'">';	
 	}	
 
 
