@@ -215,6 +215,7 @@ function ip_restrictions_check()
 
 function post_to_wall()
 	{
+	global $user;
 	global $config;
 	global $message;
 	global $author;
