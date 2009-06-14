@@ -199,11 +199,8 @@ def get_computer_state(ip, hosts_list, appendtohosts_list):
 	#		smbname = None
 	
 		if ip in fping_output:
+			pingstate = 1
 			state = bash("nmblookup -A "+ip)
-			if len(state) > 3:
-				pingstate = 1
-			else:
-				pingstate = 0
 			try:
 				smbname = state[1].split("\t")[1].split(" ")[0]#except will revert to None
 			except:
@@ -322,6 +319,15 @@ def process_computer(hosts_list_line):
 
 	if hosts_list_line["online"] == 0:#ie offline
 		return
+		
+	if hosts_list_line["online"] == 1 and hosts_list_line["name"] == None:#online but not sharing
+		for i in range(len(hosts_list)):
+			if hosts_list[i]["ip"] == ip:
+				hosts_list[i]["num_files"] = 0
+				hosts_list[i]["total_size"] = 0
+				hosts_list[i]["last_scanned"] = int(time.time())
+				break
+		return		
 	
 	if forcedscan == False:
 		text = "SELECT last_scanned FROM "+dbhosts+" where ip like '"+ip+"';"
@@ -333,7 +339,7 @@ def process_computer(hosts_list_line):
 		sharing_size = cursor.fetchone()[0]
 	
 		if (time.time() - last_scanned <= int(config["large_share_scan_delay"])) and sharing_size >= int(config["good_share"]):
-		#big shares (10gb+) are only scanned weekly
+		#big shares are only scanned infrequently
 			print("checked you out recently "+ip)
 			return
 
@@ -356,8 +362,9 @@ def process_computer(hosts_list_line):
 		#		hosts_list[i]["total_size"] = None
 			
 			hosts_list[i]["last_scanned"] = int(time.time())
+			break
 
-	print("pushin fileline to sql") #sql files stuff. put in all the files for this ip
+	print("pushing fileline to sql") #sql files stuff. put in all the files for this ip
 	for line in list_of_files:
 		dict_to_sql_as_insert(line, dbfiles)
 	
@@ -365,7 +372,7 @@ def process_computer(hosts_list_line):
 	text = "delete from "+dbfiles+" where ip like '"+ip+"' and "+str(int(time.time()))+" - last_seen > "+config["large_share_scan_delay"]+" + 24*60*60 * 3;"#delete files 1.5 weeks unseen, slightly lower than global
 	cursor.execute(text)
 	
-	print("pushin hostline to sql")
+	print("pushing hostline to sql")
 	#sql hosts stuff. update the line for this ip
 	for line in hosts_list:
 		if line["ip"] == ip:
