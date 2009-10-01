@@ -52,8 +52,8 @@ try:
 		ip4 = list(range(256))
 		
 except:
-	print("need configobj")
-	print("make the config file ~/.trufflepig")
+	print("either need configobj")
+	print("or make the config file ~/.trufflepig")
 	sys.exit()
 
 db = MySQLdb.connect(host=dbhost, port=port, user=dbuser, passwd=password, db=database)
