@@ -402,7 +402,7 @@ def process_computer(hosts_list_line):
 if len(sys.argv) > 1:
 	if sys.argv[1] == "scan" and not (len(sys.argv) >= 3 and sys.argv[2] == "quick"):
 		forcedscan = True
-		print("scanning ips given on command line")
+		print("scanning ips given on command line, forced")
 	else:
 		forcedscan = False
 	if sys.argv[1] == "ping":
