@@ -52,6 +52,9 @@ Need to install
 	python-configobj
 	smbfs
 	timeout
+	fping
+	
+Need to create a folder called trufflepig in your home directory	
 
 Need to make a database with the name specified in the config file with this format:
 	tables:
