@@ -66,7 +66,7 @@ try:
 	print("connection opened to mysql")
 
 except:
-	print "failed to connect to the mysql"
+	print "failed to connect to mysql"
 	sys.exit() 
 
 
@@ -433,7 +433,7 @@ if __name__ == "__main__":
 		ip_list = ""
 		for temp_ip in ip_list_iterator():
 			ip_list += " "+temp_ip	
-		fping_output = bash("fping -a -r 0 targets "+ip_list+" 2>&1") #FIXME hack + why is this needed ? (doesn't ping handle this ? ).
+		fping_output = bash("fping -a -r 0 targets "+ip_list+" 2>&1") #FIXME hack
 	
 	hosts_list = get_network_computers()
 			
