@@ -18,6 +18,7 @@
 from __future__ import division #to give true division
 import os, threading, time, sys, socket
 import MySQLdb
+import subprocess
 
 if os.uname()[0] == "Linux":
 	os_name = "Linux"
@@ -56,10 +57,17 @@ except:
 	print("or make the config file ~/.trufflepig")
 	sys.exit()
 
-db = MySQLdb.connect(host=dbhost, port=port, user=dbuser, passwd=password, db=database)
+
+#if the mysql database is not able to be reached then there is no point trying to insert data into it. (exit).
+try:
+	db = MySQLdb.connect(host=dbhost, port=port, user=dbuser, passwd=password, db=database)
 	
-cursor = db.cursor()
-print("connection opened to mysql")
+	cursor = db.cursor()
+	print("connection opened to mysql")
+
+except:
+	print "failed to connect to the mysql"
+	sys.exit() 
 
 
 #asynchronous mysql commands not currently used
@@ -117,13 +125,17 @@ def ip_list_iterator():
 def bash(command):		
 	return os.popen(command).read().split("\n")[:-1]
 
+
 def ping(ip):
-	result = bash("ping -A -w 1 -W 1 -c 1 "+ip)# | grep \"1 received\"")#1 second to respond, or else
 	#NOTE, watch out for "no buffer space available" errors
-	if len(result) >= 5 and "1 received" in result[4]:
-		return 1#online
-	else:
-		return 0#offline
+	ping_command =["/bin/ping", "-A", "-w", "1", "-W", "1", ip]
+	result_ping = subprocess.call(ping_command, shell=False)
+	
+	if (result_ping !=0):
+		return 0 #offline 
+	if (result_ping ==0):
+		return 1 #online
+
 
 def threader(function, arguments, limiter = None, limit = None):
 		if limiter != None:
@@ -295,7 +307,7 @@ def scan_smb(ip):
 			print(folder)
 			bash("mkdir -p \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\"")
 			if os_name == "Linux":
-				bash("smbmount \""+server[4:]+"/"+folder+"\" \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\" -o guest 2>/dev/null")#FIXME pushing warning to /dev/null		
+				bash("smbmount \""+server[4:]+"/"+folder+"\" \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\" -o guest,ro 2>/dev/null")#FIXME pushing warning to /dev/null		
 			else:#OSX
 				bash("mount_smbfs \""+server[4:]+"/"+folder+"\" \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\"")
 			
@@ -421,7 +433,7 @@ if __name__ == "__main__":
 		ip_list = ""
 		for temp_ip in ip_list_iterator():
 			ip_list += " "+temp_ip	
-		fping_output = bash("fping -a -r 0 targets "+ip_list+" 2>&1") #FIXME hack
+		fping_output = bash("fping -a -r 0 targets "+ip_list+" 2>&1") #FIXME hack + why is this needed ? (doesn't ping handle this ? ).
 	
 	hosts_list = get_network_computers()
 			
