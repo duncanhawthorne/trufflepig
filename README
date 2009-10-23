@@ -26,6 +26,8 @@ python backend.py ping quick #ping people who have hit_count != 0 or who mysql s
 
 use python backend.py once, then normally just with the quick option
 
+The user running the program must be in the fuse group. (Users are not in the fuse group by default in ubuntu)
+
 Need a file called .trufflepig in your home directory containing (with your values, sensible defaults listed below):
 
 host = 127.0.0.1
