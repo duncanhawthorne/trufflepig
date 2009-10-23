@@ -1,0 +1,108 @@
+Source code for trufflepig.
+
+Released under AGPLv3 Licence, see file COPYING
+
+Python scanner written by Duncan Hawthorne
+Mysql database tables
+PHP web interface written by Ollie Stevens and Duncan Hawthorne
+Thanks to Tim Hutt
+
+Any questions, email Ollie Stevens (ollie87@gmail.com)
+
+###########
+
+To run:
+Will run on ubuntu intrepid (and hopefully above)
+Uses samba so should (?) run on most modern *nix
+make the folder trufflepig in your home folder
+
+run 
+python backend.py
+python backend.py ping #for ping only
+python backend.py scan 123.456.789.012 #to force scan (ie ignore skipping large sharers) and upload to sql for the named ip only
+python backend.py scan #force scan everyone
+python backend.py scan quick #scan people who have hit_count != 0 or who mysql says have files shared (not forced)
+python backend.py ping quick #ping people who have hit_count != 0 or who mysql says have files shared
+
+use python backend.py once, then normally just with the quick option
+
+The user running the program must be in the fuse group. (Users are not in the fuse group by default in ubuntu)
+
+Need a file called .trufflepig in your home directory containing (with your values, sensible defaults listed below):
+
+host = 127.0.0.1
+port = 3306
+user = mysql-username
+dbfiles = files
+dbhosts = hosts
+dbwall = wall
+password = password
+database = mysql-database-name
+ip1 = 192,
+ip2 = 168,
+ip3 = 0, 1, 2
+ip4 = None
+website_name = Trufflepig
+lan_location = your_group_name
+website_has_banner = "no"
+website_banner = ./trufflepig.png (put an image here and change "website_has_banner" to yes)
+lan_nickname = your_group_name
+web_address = your_website_address
+large_share_scan_delay = 604800
+good_share = 1000000000
+
+Need to install
+	python-mysqldb
+	python-configobj
+	smbfs
+	timeout
+	fping
+	
+Need to create a folder called trufflepig in your home directory	
+
+Need to make a database with the name specified in the config file with this format:
+	tables:
+	files
+	hosts
+	wall
+
+	| files | CREATE TABLE `files` (
+	  `ip` varchar(32) default NULL COMMENT 'The ip as a string instead of an integer',
+	  `path` text NOT NULL COMMENT 'Path on the host, eg "/foo/bar"',
+	  `size` int(10) unsigned NOT NULL default '0' COMMENT 'Size of the file in bytes.',
+	  `file` text NOT NULL COMMENT 'Filename, eg "baz.txt"',
+	  `last_seen` int(10) unsigned NOT NULL default '0' COMMENT 'When this file was last seen online',
+	  FULLTEXT KEY `path` (`path`,`file`)
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='List of files.' |
+
+	| hosts | CREATE TABLE `hosts` (
+	  `ip` varchar(32) default NULL COMMENT 'The ip as a string instead of an integer',
+	  `name` varchar(32) default NULL COMMENT 'The SMB name of the host.',
+	  `online` tinyint(1) NOT NULL default '0' COMMENT 'Whether they are currently online or not (at the last scan).',
+	  `last_pinged` int(10) unsigned NOT NULL default '0' COMMENT 'When they were last pinged (not when they were last online).',
+	  `last_scanned` int(10) unsigned NOT NULL default '0' COMMENT 'When they were last scanned (their files indexed).',
+	  `last_seen` int(10) unsigned NOT NULL default '0' COMMENT 'When they were last seen online (by pinging/scanning).',
+	  `num_files` int(11) NOT NULL default '0' COMMENT 'Number of files shared by that host (cached for speed).',
+	  `total_size` bigint(20) NOT NULL default '0' COMMENT 'Total size of files shared (again, cached for speed)',
+	  `hit_count` int(10) NOT NULL default '0' COMMENT 'Number of searches on the site from this ip',
+	  `host_name` varchar(32) default NULL COMMENT 'The name of the host.',
+	  PRIMARY KEY  (`ip`)
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='List of hosts to search.' |
+
+
+	| wall  | CREATE TABLE `wall` (
+	  `ip` text NOT NULL COMMENT 'The ip that made the post.',
+	  `message` text NOT NULL COMMENT 'The message.',
+	  `author` text NOT NULL COMMENT 'The author, given by them.',
+	  `time` datetime NOT NULL default '0000-00-00 00:00:00' COMMENT 'When they posted it.'
+	) ENGINE=MyISAM DEFAULT CHARSET=latin1 COMMENT='The wall messages.' |
+	
+Can make a .htaccess file to restrict access to people on the local network, for example containing:
+
+order deny,allow
+allow from 192.168.
+deny from all
+DirectoryIndex search.php
+
+(make sure to check the specific ip ranges of your network)
+#######

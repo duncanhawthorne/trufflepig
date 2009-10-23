@@ -1,0 +1,250 @@
+/* Set the font. */
+body,td,a,p
+{
+	font-family: arial,sans-serif;
+}
+
+/* Background colour, text colour, alignment. */
+body
+{
+	background-color: #ffffff;
+	color: #000000;
+	text-align: center;
+}
+
+/* No borders for images. */
+img
+{
+	border: 0;
+}
+
+/* Link stuff. */
+a:link
+{
+	color: #0000cc;
+	text-decoration: none;
+}
+a:visited
+{
+	color: #0000cc;
+	text-decoration: none;
+}
+a:hover
+{
+	color: #0000cc;
+	text-decoration: underline;
+}
+a:active
+{
+	color: #0000cc;
+	text-decoration: underline;
+}
+
+
+a.offline
+{
+	color: #999999;
+	text-decoration: none;
+}
+
+
+/* Table things. */
+table
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	text-align: left;
+	border-collapse: collapse;
+}
+td
+{
+	padding: 5px;
+}
+
+/* Results rows. */
+.online_even
+{
+	/* background-color: #f6f6ff; */
+	/* background-color: #ffffff; */
+}
+.online_odd
+{
+	background-color: #e6efff;
+}
+.offline_even
+{
+	/* background-color: #767687; */
+	/* background-color: #eaeaea; */
+	color: #999999; 
+}
+.offline_odd
+{
+	/* background-color: #767590; */
+	background-color: #e6efff;
+	/* background-color: #e0e0e0; */
+	color: #999999;
+}
+
+/* Button/copyright. */
+#showwall, #hidewall, #copyright, #showpost
+{
+	font-size: small;
+}
+
+form
+{
+	margin: 10px;
+}
+
+h1
+{
+	margin-bottom: 35px;
+}
+
+/* Links at the bottom of the page. */
+.bottomlink
+{
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+	font-size: small;
+}
+
+/* File type links. */
+.typelink
+{
+	margin-left: 0.2em;
+	margin-right: 0.2em;
+}
+
+/* Make nicely aligned text. */
+.centretext
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 80%;
+	text-align: left;
+}
+
+/* For the contacts page. */
+.icon
+{
+	vertical-align: middle;
+}
+
+/* Names in the wall. */
+.wallname
+{
+	text-align: center;
+	vertical-align: top;
+	font-size: small;
+	font-weight: bold;
+	/* font-style: italic; */
+}
+
+/* The warning about the scanner. */
+#scannerwarning
+{
+	font-weight: bold;
+	font-size: small;
+	color: #330000;
+	background-color: #ffaaaa;
+	margin-left: auto;
+	margin-right: auto;
+	width: 50%;
+	padding: 0.5em;
+}
+
+/* FAQ question. */
+.question
+{
+	font-weight: bold;
+	color: #112200;
+}
+
+/* FAQ answer. */
+.answer
+{
+	font-weight: bold;
+	color: #112200;
+}
+
+/* Wall colours. */
+.wallcolour0 { color: #000000; }
+.wallcolour1 { color: #0000FF; }
+.wallcolour2 { color: #FF1600; }
+.wallcolour3 { color: #6EBD7C; }
+.wallcolour4 { color: #FF9600; }
+.wallcolour5 { color: #A7B1C1; }
+.wallcolour6 { color: #DED341; }
+.wallcolour7 { color: #007D9B; }
+.wallcolour8 { color: #FF69E2; }
+.wallcolour9 { color: #5815A2; }
+.wallcolour10 { color: #966C00; }
+.wallcolour11 { color: #850016; }
+.wallcolour12 { color: #087400; }
+
+/*
+.wallcolour20 { color: #425C7C; }
+.wallcolour21 { color: #417B61; }
+.wallcolour22 { color: #3E3121; }
+.wallcolour3 { color: #22213E; }
+.wallcolour4 { color: #3E2221; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour6 { color: #236F02; }
+
+
+.wallcolour0 { color: #0496BA; }
+.wallcolour1 { color: #C11DA1; }
+.wallcolour2 { color: #033BB9; }
+.wallcolour3 { color: #6F0223; }
+.wallcolour4 { color: #04BA28; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour6 { color: #AD0E28; }
+.wallcolour7 { color: #AE430E; }
+.wallcolour8 { color: #A7B1C1; }
+
+
+.wallcolour5 { color: #184A3A; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour5 { color: #184A3A; }
+.wallcolour5 { color: #184A3A; }
+
+
+.wallcolour12 { color: #281B02; }
+.wallcolour13 { color: #323B02; }
+.wallcolour14 { color: #1D6573; }
+.wallcolour15 { color: #3A741D; }
+.wallcolour16 { color: #5C6324; }
+
+*/
+
+{
+margin: 0;
+}
+
+html, body {
+	height: 100%;
+}
+
+.wrapper {
+	min-height: 100%;
+	height: auto;
+	height: 100%;
+	margin: 0 auto -4em;
+}
+
+.footer, .push {
+	height: 4em;
+}
+#helpbutton {
+position: absolute;
+right:8px;
+top: 0px
+width:0px;
+text-align: right;
+	}
