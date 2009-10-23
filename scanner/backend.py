@@ -285,34 +285,15 @@ def folder_contents(location, ip):
 			submit_location = root.split(os.getenv("HOME")+"/trufflepig/"+ip+"/")[1]			
 			list_of_files.append({"ip":ip, "path":submit_location, "size":filesize, "file":item, "last_seen":int(time.time())})
 	return list_of_files
-	
-
-def get_remote_folder_list(ip):
-	#returns the folder names from the smbclient scan of an ip, after removing extra material.
-	#ip_path = "//" + ip
-	list_exe_smbclient_scan =["/usr/bin/timeout" ,"3", "/usr/bin/smbclient","-L","//" +ip ,"-N","-g"]
-	smb_get_folder_sys = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE).communicate()[0] 
-	#shell=False to prevent escaping
-	folderlist= []
-	for item in  smb_get_folder_sys.split("\n"):
-		if (str (item[0:4]) =="Disk"):
-			if ( (item.split("|")[1] ) not in folderlist ):
-				folderlist.append(item.split("|")[1])
-	return folderlist
-
-
-def sub_process_call(command):
-	#returns the return value of a subprocess call.
-	result_sub_call= subprocess.call(command, shell=False)
-	return result_sub_call
-
+		
 def scan_smb(ip):
 		list_of_files = []		
+		#print(ip)
 		server = "smb://"+ip
 		folderlist = []
-		
-		folderlist =get_remote_folder_list(ip)
-		
+		for item in bash("timeout 3 smbclient -L //"+ip+" -N -g 2>/dev/null"):
+			if item[0:4] == "Disk":
+				folderlist.append(item.split("|")[1])	
 		
 		if len(folderlist) > 0:
 			for i in reversed(list(range(len(folderlist)))):#reverse, as we are removing elements, else would screw up position
@@ -322,41 +303,25 @@ def scan_smb(ip):
 		print(folderlist)
 	
 		#mount main folders, and look inside
-		
-		trufflepig_folder= str (os.getenv("HOME") ) + "/trufflepig"
-		
 		for folder in folderlist:
 			print(folder)
-			folder_full_path_make =trufflepig_folder + "/" +ip +"/"+ folder
-			result_mkdir = sub_process_call( ["/bin/mkdir", "-p", folder_full_path_make] )
-						
-			if (os_name == "Linux" and result_mkdir ==0): #do not do the following if the directory was not made.
-				#server_folder_request = server[4:] + "/" + folder
-				#mount_point_location = trufflepig_folder + "/" +ip +"/" + folder
-				sub_process_call ( ["/usr/bin/smbmount", server[4:] + "/" + folder, trufflepig_folder + "/" +ip +"/" + folder, "-o", "guest,ro"] ) 
-				
+			bash("mkdir -p \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\"")
+			if os_name == "Linux":
+				bash("smbmount \""+server[4:]+"/"+folder+"\" \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\" -o guest,ro 2>/dev/null")#FIXME pushing warning to /dev/null		
 			else:#OSX
 				bash("mount_smbfs \""+server[4:]+"/"+folder+"\" \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\"")
-			
 			
 			list_of_files += folder_contents(os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder, ip)			
 
 		print("umounting it all")
 		for folder in folderlist:
 			if os_name == "Linux":
-				#umount_point_location = trufflepig_folder + "/" +ip +"/" + folder
-				sub_process_call( ["/sbin/umount.cifs", "-f", "-l", trufflepig_folder + "/" +ip +"/" + folder])
-				
+				bash("umount.cifs -f -l \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\"")
 			else:#OSX
 				bash("umount \""+os.getenv("HOME")+"/trufflepig/"+ip+"/"+folder+"\"")
 		
-		if len(folderlist) > 0:#otherwise folder was never created 
-			#bash("timeout 10 /bin/rm -r \""+os.getenv("HOME")+"/trufflepig/"+ip+"\"")
-			#RM_FOLDER_PATH = trufflepig_folder + "/" +ip +"/"
-			
-			result_remove_file = sub_process_call( ["/usr/bin/timeout" ,"10", "/bin/rm","-r",trufflepig_folder + "/" +ip +"/" ] )
-			if  (result_remove_file !=0):
-				print """couldn't cleanup mount from ip""" + ip			
+		if len(folderlist) > 0:#otherwise folder was never created
+			bash("timeout 10 /bin/rm -r \""+os.getenv("HOME")+"/trufflepig/"+ip+"\"")
 		
 		return list_of_files 	
 
