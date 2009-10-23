@@ -48,6 +48,8 @@ website_has_banner = "no"
 website_banner = ./trufflepig.png (put an image here and change "website_has_banner" to yes)
 lan_nickname = your_group_name
 web_address = your_website_address
+large_share_scan_delay = 604800
+good_share = 1000000000
 
 Need to install
 	python-mysqldb
