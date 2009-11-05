@@ -290,7 +290,7 @@ def folder_contents(location, ip):
 def get_remote_folder_list(ip):
 	#returns the folder names from the smbclient scan of an ip, after removing extra material.
 	#ip_path = "//" + ip
-	list_exe_smbclient_scan =["/usr/bin/timeout" ,"3", "/usr/bin/smbclient","-L","//" +ip ,"-N","-g"]
+	command =["/usr/bin/timeout" ,"3", "/usr/bin/smbclient","-L","//" +ip ,"-N","-g"]
 	smb_get_folder_sys = subprocess.Popen(command, shell=False, stdout=subprocess.PIPE).communicate()[0] 
 	#shell=False to prevent escaping
 	folderlist= []
