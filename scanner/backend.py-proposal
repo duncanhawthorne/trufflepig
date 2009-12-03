@@ -70,30 +70,6 @@ except:
 	sys.exit() 
 
 
-#asynchronous mysql commands not currently used
-#due to other mysql commands needing return values
-#and mySQLdb getting confused with multiple threads in general
-#if you do use this, make sure to stop the main thread doing sys.exit() before this thread is done
-'''
-end_of_program = {}
-synchronous = True
-mysql_commands_backlog = []
-def run_on_mysql(text):
-	if synchronous == True:
-		cursor.execute(text)
-	else:
-		mysql_commands_backlog.append(text)
-	
-def mysql_cleanup():
-	#run this in a seperate thread
-	end_of_program["mysql thread"] = False
-	while len(mysql_commands_backlog) != 0 or end_of_program["main"] == False:
-		None
-		#go through backlog list
-		#doing cursor.execute(line)
-		#removing from the backlog
-	end_of_program["mysql thread"] = True
-'''	
 
 def ip_list_iterator():
 	if len(sys.argv) >= 2 and ((sys.argv[1] == "scan" and len(sys.argv) >= 3 ) or (sys.argv[1] == "ping" and len(sys.argv) >= 3)):
@@ -183,76 +159,34 @@ def dict_to_sql_as_update(line, sqltable, primary_key, maybe_from_scratch = Fals
 
 def get_computer_state(ip, hosts_list, appendtohosts_list):
 	appendtohosts_list.append(None) # a simple tracket to see how many of these functions are still runnning +1
-		
-	if justping == True:
-		pingstate = ping(ip)
-		smbname = None	
-	else:
-	#	state = bash("nmblookup -A "+ip)
-	#	
-	#	if len(state) > 3:
-	#		pingstate2 = 1
-	#	else:
-	#		pingstate2 = 0
-	#	
-	#	if pingstate2 == 1:
-	#		pingstate1 = ping(ip)
-	#	else:#no point checking ping(ip) as need both to be 1 #and also pinging loads of ips causes weird "connect: No buffer space available" errors
-	#		pingstate1 = 0
-	#	
-	#	if pingstate1 == 1 and pingstate2 == 1:#online and with an smb name (ie the only useful type of online)
-	#		pingstate = 1
-	#	else:
-	#		pingstate = 0
-	#	
-	#	try:
-	#		smbname = state[1].split("\t")[1].split(" ")[0]#except will revert to None
-	#	except:
-	#		smbname = None
 	
+	pingstate =0 
+	smbname = None	
+	
+	if justping == True:
+		if ip in fping_output:
+			pingstate =1
+	
+	else:
 		if ip in fping_output:
 			pingstate = 1
-			state = bash("nmblookup -A "+ip)
 			try:
-				smbname = state[1].split("\t")[1].split(" ")[0]#except will revert to None
+				socket_Smb_Port = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+				socket_Smb_Port.connect( (ip, 445) )
+				socket_Smb_Port.close()
 			except:
-				smbname = None
-				
-			'''	
-			#this is perfect when run as python backend.py scan quick. not putting quick option makes this too slow, as host lookups that fail take ages. new people are taken care of by the current code
-			hit_count = None
-			try:
-				host = socket.gethostbyaddr(ip)[0]
-			except:
-				host = None
+				pingstate=0
 			
-			print 1
-			
-			text = "SELECT host_name, hit_count FROM "+dbhosts+" where ip like '"+ip+"';"
-			cursor.execute(text)
-			current_host_name, current_hit_count = cursor.fetchone()
-			
-			print 2
-			
-		#be careful	
-		#	if (host != current_host_name and current_host_name != None) or host == None: 
-		#	#if changed host, but if host currently unset, just set it
-		#	#or host no longer registered
-		#		if hit_count > 0:
-		#			print("resetting "+ip)
-		#			hit_count = 0
-				
-			print 3		
-			'''		
-					
-		else:
-			pingstate = 0
-			smbname = None
-	
+			if pingstate ==1:
+				state = bash("nmblookup -A "+ip)
+				try:
+					smbname = state[1].split("\t")[1].split(" ")[0]#except will revert to None
+				except:
+					smbname = None
+	lastseen = None
 	if pingstate == 1:
 		lastseen = int(time.time())
-	else:
-		lastseen = None
+		
 	line = {"ip":ip, "name":smbname, "online":pingstate, "last_pinged":int(time.time()), "last_scanned":None, "last_seen":lastseen, "num_files":None, "total_size":None}
 	hosts_list.append(line)
 	
