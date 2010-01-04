@@ -397,12 +397,12 @@ else:
 
 	
 if __name__ == "__main__":
-	if justping == False:
-		print("pinging ips, this could take a minute or two")
-		ip_list = ""
-		for temp_ip in ip_list_iterator():
-			ip_list += " "+temp_ip	
-		fping_output = bash("fping -a -r 0 targets "+ip_list+" 2>&1") #FIXME hack
+	
+	print("pinging ips, this could take a minute or two")
+	ip_list = ""
+	for temp_ip in ip_list_iterator():
+		ip_list += " "+temp_ip	
+	fping_output = bash("fping -a -r 0 targets "+ip_list+" 2>&1") #FIXME hack
 	
 	hosts_list = get_network_computers()
 			
