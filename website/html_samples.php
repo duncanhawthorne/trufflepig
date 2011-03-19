@@ -129,6 +129,8 @@ function search_box()
 	<option value="video" <?php if ($search_mode == 'video') echo 'selected="selected"' ?>>Video</option>
 	<option value="music" <?php if ($search_mode == 'music') echo 'selected="selected"' ?>>Music</option>
 	<option value="documents" <?php if ($search_mode == 'documents') echo 'selected="selected"' ?>>Documents</option>
+	<option value="extension" <?php if ($search_mode == 'extension') echo 'selected="selected"' ?>>File Extension Search</option>
+	<option value="disk_images" <?php if ($search_mode == 'disk_images') echo 'selected="selected"' ?>>Disk Images</option>
 	<option value="all_films" <?php if ($search_mode == 'all_films') echo 'selected="selected"' ?>>Show all films</option>
 	<option value="show_my_files" <?php if ($search_mode == 'show_my_files') echo 'selected="selected"' ?>>Show my files</option>
 	</select>
@@ -282,7 +284,8 @@ function show_hosts_page()
 				{$data = mysql_query('SELECT ip, name, online, total_size/1024/1024/1024, num_files FROM '.$config[dbhosts].' WHERE ip like "'.$user->info[ip].'" ');}		
 			
 			while($row = mysql_fetch_array( $data ))
-			{					#colour the table rows alternately, and grey out offline computers
+			{		
+			#colour the table rows alternately, and grey out offline computers
 			$online_status = ($row['online']) ? 'online' : 'offline';			
 			$even_or_odd = ($table_row_number%2) ? 'even' : 'odd';
 			$class = 'class = "' . $online_status . '_' . $even_or_odd . '"';
@@ -290,7 +293,8 @@ function show_hosts_page()
 			echo "<tr $class >";
 				if (eregi("windows", $_SERVER['HTTP_USER_AGENT']))
 					{
-					echo '<td align="center"><a class='.$online_status.' href="' . 'file:///\\\\' . $row['ip'] . '"> ' . $row['name'] . ' </a></td>';
+					//Change file from file:///\\\\ to file://///
+					echo '<td align="center"><a class='.$online_status.' href="' . 'file://///' . $row['ip'] . '"> ' . $row['name'] . ' </a></td>';
 					}
 				else
 					{
@@ -348,6 +352,10 @@ function show_search_results()
 		{
 		$sql = $sql . ' AND (file LIKE "%.doc" OR file LIKE "%.xls" OR file LIKE "%.ppt" OR file LIKE "%.pdf" OR file LIKE "%.odt" OR file LIKE "%.txt" OR file LIKE "%.rtf" OR file LIKE "%.ods" OR file LIKE "%.odp")';
 		}
+	if ($search_mode == 'disk_images') 
+		{
+		$sql = $sql . ' AND (file LIKE "%.iso" OR file LIKE "%.bin" OR file LIKE "%.cue" OR file LIKE "%.vdi" OR file LIKE "%.vhd" OR file LIKE "%.wim" OR file LIKE "%.ima" OR file LIKE "%.img")';
+		}
 		
 	#remove nuisance files (thumbs.db, .lnk files, etc.)
 	#I doubt anyone wants to look for these
@@ -374,6 +382,18 @@ function show_search_results()
 		JOIN '.$config[dbhosts].' ON '.$config[dbhosts].'.ip = '.$config[dbfiles].'.ip
 
 		WHERE (size > 600000000) AND (file LIKE "%.avi" OR file LIKE "%.mpg" OR file LIKE "%.mpeg" OR file LIKE "%.ogm" OR file LIKE "%.wmv" OR file LIKE "%.mkv" OR file LIKE "%.mp4" OR file LIKE "%.ogg" OR file LIKE "%.ogv") ORDER BY ('.$config[dbhosts].'.online = 0), ('.$config[dbfiles].'.file)
+		'; #online then offline, each alphabetical
+		}
+	
+	if ($search_mode == 'extension') 
+		{
+		$sql = 'SELECT DISTINCT '.$config[dbfiles].'.ip, '.$config[dbhosts].'.name, '.$config[dbhosts].'.online, path, file, size 
+	
+		FROM '.$config[dbfiles].' 
+	
+		JOIN '.$config[dbhosts].' ON '.$config[dbhosts].'.ip = '.$config[dbfiles].'.ip
+
+		WHERE (file LIKE "%.' .$keyword. '") ORDER BY ('.$config[dbhosts].'.online = 0), ('.$config[dbfiles].'.file)
 		'; #online then offline, each alphabetical
 		}
 	
@@ -421,8 +441,8 @@ function show_search_results()
 			$class = 'class = "' . $online_status . '_' . $even_or_odd . '"';
 
 			if (eregi("windows", $_SERVER['HTTP_USER_AGENT']))
-				{$file_link = 'file:///\\\\' . $row['ip'] . '\\' . str_replace('/','\\',$row['path']) . '\\';
-				$computer_link = 'file:///\\\\' . $row['ip'] . '/';}
+				{$file_link = 'file://///' . $row['ip'] . '\\' . str_replace('/','\\',$row['path']) . '\\';
+				$computer_link = 'file://///' . $row['ip'] . '/';}
 			else
 				{$file_link = 'smb://' . $row['ip'] . '/' . $row['path'] . '/';
 				$computer_link = 'smb://' . $row['ip'] . '/';}
